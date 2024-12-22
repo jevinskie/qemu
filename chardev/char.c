@@ -501,6 +501,8 @@ void qemu_chr_parse_common(QemuOpts *opts, ChardevCommon *backend)
 
     backend->has_logappend = true;
     backend->logappend = qemu_opt_get_bool(opts, "logappend", false);
+
+    backend->spawngui = qemu_opt_get_bool(opts, "spawngui", false);
 }
 
 static const ChardevClass *char_get_class(const char *driver, Error **errp)
@@ -943,6 +945,10 @@ QemuOptsList qemu_chardev_opts = {
             .name = "abstract",
             .type = QEMU_OPT_BOOL,
 #endif
+        },{
+            .name = "spawngui",
+            .type = QEMU_OPT_BOOL,
+            .def_value_str = "off",
         },
         { /* end of list */ }
     },

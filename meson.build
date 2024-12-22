@@ -635,6 +635,13 @@ if vmnet.found() and not cc.has_header_symbol('vmnet/vmnet.h',
   endif
 endif
 
+jeviterm = not_found
+if get_option('jeviterm').allowed()
+  jeviterm = dependency('jeviterm', version: '>=0.1.1',
+                        required: get_option('jeviterm'),
+                        method: 'pkg-config',  kwargs: static_kwargs)
+endif
+
 seccomp = not_found
 seccomp_has_sysrawrc = false
 if not get_option('seccomp').auto() or have_system or have_tools
@@ -1822,6 +1829,7 @@ config_host_data.set('CONFIG_ATTR', libattr.found())
 config_host_data.set('CONFIG_BDRV_WHITELIST_TOOLS', get_option('block_drv_whitelist_in_tools'))
 config_host_data.set('CONFIG_BRLAPI', brlapi.found())
 config_host_data.set('CONFIG_COCOA', cocoa.found())
+config_host_data.set('CONFIG_JEVITERM', jeviterm.found())
 config_host_data.set('CONFIG_FUZZ', get_option('fuzzing'))
 config_host_data.set('CONFIG_GCOV', get_option('b_coverage'))
 config_host_data.set('CONFIG_LIBUDEV', libudev.found())
@@ -3323,7 +3331,7 @@ qmp = declare_dependency(link_whole: [libqmp])
 
 libchardev = static_library('chardev', chardev_ss.sources() + genh,
                             name_suffix: 'fa',
-                            dependencies: chardev_ss.dependencies(),
+                            dependencies: chardev_ss.dependencies() + jeviterm,
                             build_by_default: false)
 
 chardev = declare_dependency(link_whole: libchardev)
@@ -3888,6 +3896,7 @@ summary(summary_info, bool_yn: true, section: 'Crypto')
 summary_info = {}
 if targetos == 'darwin'
   summary_info += {'Cocoa support':           cocoa}
+  summary_info += {'jeviterm support':        jeviterm}
   summary_info += {'vmnet.framework support': vmnet}
 endif
 summary_info += {'SDL support':       sdl}

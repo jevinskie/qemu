@@ -123,6 +123,8 @@ option('bpf', type : 'feature', value : 'auto',
         description: 'eBPF support')
 option('cocoa', type : 'feature', value : 'auto',
        description: 'Cocoa user interface (macOS only)')
+option('jeviterm', type : 'feature', value : 'auto',
+       description: 'jeviterm-based iTerm2 integration (macOS only)')
 option('curl', type : 'feature', value : 'auto',
        description: 'CURL block device driver')
 option('gio', type : 'feature', value : 'auto',

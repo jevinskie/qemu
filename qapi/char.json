@@ -209,7 +209,8 @@
 ##
 { 'struct': 'ChardevCommon',
   'data': { '*logfile': 'str',
-            '*logappend': 'bool' } }
+            '*logappend': 'bool',
+            '*spawngui': 'bool'} }
 
 ##
 # @ChardevFile:
