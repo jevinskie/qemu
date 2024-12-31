@@ -1198,6 +1198,13 @@ if vmnet.found() and not cc.has_header_symbol('vmnet/vmnet.h',
   endif
 endif
 
+jeviterm = not_found
+if get_option('jeviterm').allowed()
+  jeviterm = dependency('jeviterm', version: '>=0.1.8',
+                        required: get_option('jeviterm'),
+                        method: 'pkg-config')
+endif
+
 seccomp = not_found
 seccomp_has_sysrawrc = false
 if not get_option('seccomp').auto() or have_system or have_tools
@@ -2446,6 +2453,7 @@ config_host_data.set('CONFIG_DARWIN', host_os == 'darwin')
 config_host_data.set('CONFIG_FDT', fdt.found())
 config_host_data.set('CONFIG_FUZZ', get_option('fuzzing'))
 config_host_data.set('CONFIG_GCOV', get_option('b_coverage'))
+config_host_data.set('CONFIG_JEVITERM', jeviterm.found())
 config_host_data.set('CONFIG_LIBUDEV', libudev.found())
 config_host_data.set('CONFIG_LINUX', host_os == 'linux')
 config_host_data.set('CONFIG_POSIX', host_os != 'windows')
@@ -3988,11 +3996,11 @@ qmp = declare_dependency(objects: libqmp.extract_all_objects(recursive: false),
                          dependencies: qmp_ss.dependencies())
 
 libchardev = static_library('chardev', chardev_ss.sources() + genh,
-                            dependencies: chardev_ss.dependencies(),
+                            dependencies: chardev_ss.dependencies() + jeviterm,
                             build_by_default: false)
 
 chardev = declare_dependency(objects: libchardev.extract_all_objects(recursive: false),
-                             dependencies: chardev_ss.dependencies())
+                             dependencies: chardev_ss.dependencies() + jeviterm)
 
 hwcore_ss = hwcore_ss.apply({})
 libhwcore = static_library('hwcore', sources: hwcore_ss.sources() + genh,
@@ -4702,6 +4710,7 @@ summary(summary_info, bool_yn: true, section: 'Crypto')
 summary_info = {}
 if host_os == 'darwin'
   summary_info += {'Cocoa support':           cocoa}
+  summary_info += {'jeviterm support':        jeviterm}
 endif
 summary_info += {'SDL support':       sdl}
 summary_info += {'SDL image support': sdl_image}

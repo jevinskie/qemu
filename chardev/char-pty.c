@@ -35,6 +35,10 @@
 #include "chardev/char-io.h"
 #include "qom/object.h"
 
+#ifdef CONFIG_JEVITERM
+#include <jeviterm.h>
+#endif
+
 struct PtyChardev {
     Chardev parent;
     QIOChannel *ioc;
@@ -374,6 +378,19 @@ static void char_pty_open(Chardev *chr,
             s->path = g_strdup(path);
         }
     }
+
+#ifdef CONFIG_JEVITERM
+    if (backend->u.pty.data->spawngui) {
+        static int last_win_id = JEVITERM_NONE_WINDOW_ID;
+        const char *cmd = g_strdup_printf("/usr/bin/env bash -e -o pipefail -l -c \"/opt/homebrew/opt/picocom/bin/picocom -q %s; read\"", pty_name);
+        g_assert(cmd);
+        const char *cmds[] = {cmd, NULL};
+        const int new_win_id = jeviterm_open_tabs(cmds, 1, last_win_id, "qemu");
+        last_win_id = new_win_id;
+        g_free((void *)cmd);
+    }
+#endif
+
 }
 
 static void char_pty_parse(QemuOpts *opts, ChardevBackend *backend,

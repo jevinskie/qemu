@@ -199,11 +199,14 @@
 # @logappend: true to append instead of truncate (default to false to
 #     truncate)
 #
+# @spawngui: true to spawn a GUI terminal attached to the chardev(s)
+#
 # Since: 2.6
 ##
 { 'struct': 'ChardevCommon',
   'data': { '*logfile': 'str',
-            '*logappend': 'bool' } }
+            '*logappend': 'bool',
+            '*spawngui': 'bool'} }
 
 ##
 # @ChardevFile:
