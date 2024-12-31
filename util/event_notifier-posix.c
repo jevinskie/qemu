@@ -19,7 +19,7 @@
 #include <sys/eventfd.h>
 #endif
 
-#ifdef CONFIG_EVENTFD
+#if defined(CONFIG_EVENTFD) || defined(__APPLE__)
 /*
  * Initialize @e with existing file descriptor @fd.
  * @fd must be a genuine eventfd object, emulation with pipe won't do.
