@@ -70,7 +70,7 @@ config MACIO
 config IVSHMEM_DEVICE
     bool
     default y if PCI_DEVICES
-    depends on PCI && LINUX && IVSHMEM && MSI_NONBROKEN
+    depends on PCI && DARWIN && IVSHMEM && MSI_NONBROKEN
 
 config ECCMEMCTL
     bool

@@ -3211,7 +3211,9 @@ disassemblers = {
   'loongarch' : ['CONFIG_LOONGARCH_DIS'],
 }
 
-have_ivshmem = config_host_data.get('CONFIG_EVENTFD')
+#have_ivshmem = config_host_data.get('CONFIG_EVENTFD')
+have_ivshmem = true
+config_host_data.set('CONFIG_IVSHMEM', have_ivshmem)
 host_kconfig = \
   (get_option('fuzzing') ? ['CONFIG_FUZZ=y'] : []) + \
   (have_tpm ? ['CONFIG_TPM=y'] : []) + \
@@ -3228,6 +3230,7 @@ host_kconfig = \
   (have_vhost_kernel ? ['CONFIG_VHOST_KERNEL=y'] : []) + \
   (have_virtfs ? ['CONFIG_VIRTFS=y'] : []) + \
   (host_os == 'linux' ? ['CONFIG_LINUX=y'] : []) + \
+  (host_os == 'darwin' ? ['CONFIG_DARWIN=y'] : []) + \
   (multiprocess_allowed ? ['CONFIG_MULTIPROCESS_ALLOWED=y'] : []) + \
   (vfio_user_server_allowed ? ['CONFIG_VFIO_USER_SERVER_ALLOWED=y'] : []) + \
   (hv_balloon ? ['CONFIG_HV_BALLOON_POSSIBLE=y'] : []) + \
@@ -3281,6 +3284,11 @@ foreach target : target_dirs
       endif
       target_kconfig += [ sym + '=y' ]
     endif
+    if have_ivshmem
+      target_kconfig += ['CONFIG_IVSHMEM=y', 'CONFIG_IVSHMEM_DEVICE=y']
+      config_target += {'CONFIG_IVSHMEM': 'y', 'CONFIG_IVSHMEM_DEVICE': 'y'}
+    endif
+
   endforeach
   if target_kconfig.length() == 0
     if default_targets
@@ -3344,6 +3352,7 @@ foreach target : target_dirs
   endforeach
   config_target_data.set('QEMU_ARCH',
                          'QEMU_ARCH_' + config_target['TARGET_BASE_ARCH'].to_upper())
+  config_target_data.set('CONFIG_IVSHMEM_DEVICE', have_ivshmem)
   config_target_h += {target: configure_file(output: target + '-config-target.h',
                                                configuration: config_target_data)}
 
@@ -4649,6 +4658,7 @@ if have_system
   summary_info += {'default devices':   get_option('default_devices')}
   summary_info += {'out of process emulation': multiprocess_allowed}
   summary_info += {'vfio-user server': vfio_user_server_allowed}
+  summary_info += {'ivshmem': have_ivshmem}
 endif
 summary(summary_info, bool_yn: true, section: 'Targets and accelerators')
 
