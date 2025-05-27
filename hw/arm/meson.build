@@ -63,6 +63,7 @@ arm_ss.add(when: 'CONFIG_XEN', if_true: files(
   'xen-stubs.c',
   'xen-pvh.c',
 ))
+arm_ss.add(when: 'CONFIG_AMD_PSP', if_true: files('amd-psp_zen.c', 'psp-misc.c', 'psp-smn.c', 'psp-smn-flash.c', 'psp-sts.c', 'psp-timer.c', 'psp-x86.c', 'psp-fuse.c', 'psp.c', 'psp-smn-misc.c'))
 
 system_ss.add(when: 'CONFIG_ARM_SMMUV3', if_true: files('smmu-common.c'))
 system_ss.add(when: 'CONFIG_COLLIE', if_true: files('collie.c'))
