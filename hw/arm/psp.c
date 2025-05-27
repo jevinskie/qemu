@@ -19,7 +19,7 @@
 #include "qemu/osdep.h"
 #include "qapi/error.h"
 #include "qemu/module.h"
-#include "sysemu/sysemu.h"
+#include "system/system.h"
 #include "exec/address-spaces.h"
 #include "hw/sysbus.h"
 #include "qemu/osdep.h"
@@ -216,9 +216,8 @@ static void amd_psp_realize(DeviceState *dev, Error **errp)
 }
 
 /* User-configurable options with "-global amd-psp.<property>=<value> */
-static Property amd_psp_properties[] = {
+static const Property amd_psp_properties[] = {
     DEFINE_PROP_BOOL("dbg_mode", AmdPspState, dbg_mode, false),
-    DEFINE_PROP_END_OF_LIST(),
 };
 
 static void amd_psp_class_init(ObjectClass *oc, void* data)

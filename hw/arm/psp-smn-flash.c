@@ -20,7 +20,7 @@
 #include "qemu/log.h"
 #include "qapi/error.h"
 #include "qemu/module.h"
-#include "sysemu/sysemu.h"
+#include "system/system.h"
 #include "exec/address-spaces.h"
 #include "hw/sysbus.h"
 #include "qemu/osdep.h"
@@ -74,9 +74,8 @@ static void psp_smn_flash_realize(DeviceState *dev, Error **errp)
 
 }
 
-static Property psp_smn_flash_properties[] = {
+static const Property psp_smn_flash_properties[] = {
     DEFINE_PROP_STRING("flash_img", PSPSmnFlashState, flash_img),
-    DEFINE_PROP_END_OF_LIST(),
 };
 
 static void psp_smn_flash_class_init(ObjectClass *klass, void * data)
