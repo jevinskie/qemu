@@ -134,7 +134,7 @@ static const TypeInfo amd_psp_machine_types[] = {
         .parent         = TYPE_AMD_PSP_MACHINE,
         .class_init     = psp_zen_machine_init,
     }, {
-        .name           = MACHINE_TYPE_NAME("amd-psp-zen+"),
+        .name           = MACHINE_TYPE_NAME("amd-psp-zenp"),
         .parent         = TYPE_AMD_PSP_MACHINE,
         .class_init     = psp_zen_plus_machine_init,
     }, {
