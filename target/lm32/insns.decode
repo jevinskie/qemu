@@ -1,0 +1,28 @@
+# Fields:
+%rs3       27:5
+%rs2       20:5
+%rs1       15:5
+%rd        7:5
+%sh5       20:5
+%sh6       20:6
+
+# Fields:
+%b31 31:1
+%op 26:6
+%op5 26:5
+%reg0 21:5
+%csr 21:4
+%reg1 16:5
+%reg2 11:5
+
+# Immediates:
+%imm16 0:16
+
+# Argument sets:
+&ri reg0 reg1 imm16
+
+# Formats:
+@ri  . ..... ..... ..... ................ &ri %reg0 %reg1 %imm16
+
+# Instructions:
+addi 0 01101 ..... ..... ................ @ri
