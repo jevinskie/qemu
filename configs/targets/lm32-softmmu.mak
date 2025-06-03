@@ -1,0 +1,3 @@
+TARGET_ARCH=lm32
+# TARGET_XML_FILES= gdb-xml/lm32-cpu.xml
+TARGET_LONG_BITS=32
