@@ -1,28 +1,158 @@
-# Fields:
-%rs3       27:5
-%rs2       20:5
-%rs1       15:5
-%rd        7:5
-%sh5       20:5
-%sh6       20:6
+#
+# Lattice Mico32 (LM32) instruction decode definitions.
+#
+# Copyright (c) 2025 Jevin Sweval <jevinsweval@gmail.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, see <http://www.gnu.org/licenses/>.
+#
 
-# Fields:
-%b31 31:1
-%op 26:6
-%op5 26:5
-%reg0 21:5
-%csr 21:4
-%reg1 16:5
-%reg2 11:5
+# Based on LatticeMico32 Processor Reference Manual version 3.9
 
-# Immediates:
-%imm16 0:16
+# Field definitions
+%imm26   0:s26
+%imm16   0:s16
+%imm5    0:5
+%rX      21:5
+%rY      16:5
+%rZ      11:5
+%csr     21:5
+# %rimm3   0:3
 
-# Argument sets:
-&ri reg0 reg1 imm16
+# Argument sets
+&rri     rX rY imm
+&rrr     rX rY rZ
+&ri      rX imm
+&rr      rX rY
+&r       rX
+&i       imm
+&cr      rX csr
+# &load    rX rY imm
+# &store   rX rY imm
+&sext    rX rY
+&raise
 
-# Formats:
-@ri  . ..... ..... ..... ................ &ri %reg0 %reg1 %imm16
+# Formats
+@RI      0..... ..... ..... ................     &rri rX=%rX rY=%rY imm=%imm16
+@RR      1..... ..... ..... ..... 00000000000    &rrr rX=%rX rY=%rY rZ=%rZ
+@CR      1..... ..... ..... 0000000000000000     &cr  rX=%rY csr=%csr
+@I       1..... ..........................       &i   imm=%imm26
+@RI5     0..... ..... ..... 00000000000 .....    &rri rX=%rX rY=%rY imm=%imm5
+@RAISE   101011 00000 00000 0000000000000 ...    &raise
+@SEXT    1..... ..... 00000 ..... 00000000000    &sext rX=%rX rY=%rZ
+@CALLBR  110..0 ..... 00000 00000 00000000000    &r rX=%rX
 
-# Instructions:
-addi 0 01101 ..... ..... ................ @ri
+
+# Load/Store formats (special arg sets for stronger typing if wanted)
+# @LOAD    0..... ..... ..... ................     &load rX=%rX rY=%rY imm=%imm16
+# @STORE   0..... ..... ..... ................     &store rX=%rX rY=%rY imm=%imm16
+
+# Arithmetic & Logic - Immediate forms
+srui     .00000 ..... ..... ........... .....    @RI5
+nori     .00001 ..... ..... ................     @RI
+muli     .00010 ..... ..... ................     @RI
+sri      .00101 ..... ..... ........... .....    @RI5
+addi     .01101 ..... ..... ................     @RI
+ori      .01110 ..... ..... ................     @RI
+sli      .01111 ..... ..... ........... .....    @RI5
+xori     .00110 ..... ..... ................     @RI
+andi     .01000 ..... ..... ................     @RI
+xnori    .01001 ..... ..... ................     @RI
+andhi    .11000 ..... ..... ................     @RI
+orhi     .11110 ..... ..... ................     @RI
+
+# Memory operations
+# sh       .00011 ..... ..... ................     @STORE
+# lb       .00100 ..... ..... ................     @LOAD
+# lh       .00111 ..... ..... ................     @LOAD
+# lw       .01010 ..... ..... ................     @LOAD
+# lhu      .01011 ..... ..... ................     @LOAD
+# sb       .01100 ..... ..... ................     @STORE
+# lbu      .10000 ..... ..... ................     @LOAD
+# sw       .10110 ..... ..... ................     @STORE
+sh       .00011 ..... ..... ................     @RI
+lb       .00100 ..... ..... ................     @RI
+lh       .00111 ..... ..... ................     @RI
+lw       .01010 ..... ..... ................     @RI
+lhu      .01011 ..... ..... ................     @RI
+sb       .01100 ..... ..... ................     @RI
+lbu      .10000 ..... ..... ................     @RI
+sw       .10110 ..... ..... ................     @RI
+
+
+# Conditional Branches
+be       .10001 ..... ..... ................     @RI
+bg       .10010 ..... ..... ................     @RI
+bge      .10011 ..... ..... ................     @RI
+bgeu     .10100 ..... ..... ................     @RI
+bgu      .10101 ..... ..... ................     @RI
+bne      .10111 ..... ..... ................     @RI
+
+# Compare immediate
+cmpei    .11001 ..... ..... ................     @RI
+cmpgi    .11010 ..... ..... ................     @RI
+cmpgei   .11011 ..... ..... ................     @RI
+cmpgeui  .11100 ..... ..... ................     @RI
+cmpgui   .11101 ..... ..... ................     @RI
+cmpnei   .11111 ..... ..... ................     @RI
+
+# Arithmetic & Logic - Register forms
+sru      .00000 ..... ..... ..... ...........    @RR
+nor      .00001 ..... ..... ..... ...........    @RR
+mul      .00010 ..... ..... ..... ...........    @RR
+divu     .00011 ..... ..... ..... ...........    @RR
+sr       .00101 ..... ..... ..... ...........    @RR
+xor      .00110 ..... ..... ..... ...........    @RR
+div      .00111 ..... ..... ..... ...........    @RR
+and      .01000 ..... ..... ..... ...........    @RR
+xnor     .01001 ..... ..... ..... ...........    @RR
+add      .01101 ..... ..... ..... ...........    @RR
+or       .01110 ..... ..... ..... ...........    @RR
+sl       .01111 ..... ..... ..... ...........    @RR
+modu     .10001 ..... ..... ..... ...........    @RR
+sub      .10010 ..... ..... ..... ...........    @RR
+mod      .10101 ..... ..... ..... ...........    @RR
+
+# Compare register
+cmpe     .11001 ..... ..... ..... ...........    @RR
+cmpg     .11010 ..... ..... ..... ...........    @RR
+cmpge    .11011 ..... ..... ..... ...........    @RR
+cmpgeu   .11100 ..... ..... ..... ...........    @RR
+cmpgu    .11101 ..... ..... ..... ...........    @RR
+cmpne    .11111 ..... ..... ..... ...........    @RR
+
+# Control/Status Register operations
+rcsr     .00100 ..... ..... ................     @CR
+wcsr     .10100 ..... ..... ................     @CR
+
+# Special instructions
+break    ...... ..... ..... ............. 010    @RAISE
+scall    ...... ..... ..... ............. 111    @RAISE
+sextb    .01100 ..... ..... ................     @SEXT
+sexth    .10111 ..... ..... ................     @SEXT
+#sextb    101100 ..... ..... 00000 00000000000    &rr rX=%rX rY=%rY
+#sexth    110111 ..... ..... 00000 00000000000    &rr rX=%rX rY=%rY
+
+# Branch/Call register forms
+{
+  [
+    bret 11000011111000000000000000000000
+    eret 11000011110000000000000000000000
+  ]
+  b      ...00. ..........................       @CALLBR
+}
+call     ...11. ..........................       @CALLBR
+
+# Branch/Call immediate forms
+bi       .11000 ..........................       @I
+calli    .11110 ..........................       @I
