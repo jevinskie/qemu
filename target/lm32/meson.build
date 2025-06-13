@@ -1,8 +1,10 @@
 gen = decodetree.process('insns.decode')
 
 lm32_ss = ss.source_set()
+lm32_ss.add(gen)
 lm32_ss.add(files(
   'cpu.c',
+  'disas.c',
   'gdbstub.c',
   'helper.c',
   'lm32-semi.c',
